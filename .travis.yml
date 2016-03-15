@@ -8,7 +8,10 @@ branches:
 
 before_install:
   - sudo apt-get -qq update
-  - sudo apt-get install -qq qt5-qmake qtbase5-dev libqt5gui5 libqt5quick5 libqt5qml5 qtdeclarative5-dev qtdeclarative5-qtquick2-plugin
+  - sudo apt-get install -qq qtchooser qt5-qmake qt5-default qtbase5-dev libqt5gui5 libqt5quick5 libqt5qml5 qtdeclarative5-dev qtdeclarative5-qtquick2-plugin
+
+env:
+  - QT_SELECT=5
 
 script:
   - qmake network-clipboard.pro -r -spec linux-g++
