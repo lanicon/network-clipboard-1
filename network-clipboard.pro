@@ -21,3 +21,9 @@ HEADERS += \
     networkclipboard.h \
     networkclipboarditem.h \
     qmlclipboardadapter.h
+
+DESTDIR = bin
+OBJECTS_DIR = build
+MOC_DIR = build
+RCC_DIR = build
+UI_DIR = build
