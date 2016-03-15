@@ -1,5 +1,8 @@
 language: c++
 
+branches:
+  only: master
+
 before_install:
   sudo apt-add-repository ppa:ubuntu-sdk-team/ppa
   - sudo apt-get -qq update
