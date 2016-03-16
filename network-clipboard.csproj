@@ -57,5 +57,6 @@
     <Compile Include="Configuration.cs" />
     <Compile Include="JsonFormatter.cs" />
     <Compile Include="Listener.cs" />
+    <Compile Include="Controller.cs" />
   </ItemGroup>
 </Project>

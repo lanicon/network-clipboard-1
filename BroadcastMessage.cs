@@ -14,6 +14,7 @@ namespace NetworkClipboard
     {
         public int UserId { get; set; }
         public string Channel { get; set; }
+        public DateTime Timestap { get; set; }
         public BroadcastMessageType MessageType { get; set; }
         public byte[] Body { get; set; }
         public byte PacketId { get; private set; }

@@ -18,6 +18,7 @@ namespace NetworkClipboard
             {
                     UserId = userId,
                     Channel = channel,
+                    Timestap = DateTime.Now,
                     MessageType = BroadcastMessageType.Paste,
                     Body = Encoding.UTF8.GetBytes(text)
             };

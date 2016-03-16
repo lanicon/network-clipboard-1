@@ -47,20 +47,23 @@ namespace NetworkClipboard
             }
         }
 
-        private void Listen()
+        private async void Listen()
         {
-            while(Listening)
+            await Task.Run()(() =>
             {
-                receiveTask = BeginReceive();
-                receiveTask.ContinueWith((task) =>
+                while (Listening)
                 {
-                    if (task != null)
-                    {
-                        Task<UdpReceiveResult> udptask = task as Task<UdpReceiveResult>;
-                        ProcessDatagram(udptask.Result.Buffer);
-                    }
-                });
-            }
+                    receiveTask = BeginReceive();
+                    receiveTask.ContinueWith((task) =>
+                        {
+                            if (task != null)
+                            {
+                                Task<UdpReceiveResult> udptask = task as Task<UdpReceiveResult>;
+                                ProcessDatagram(udptask.Result.Buffer);
+                            }
+                        });
+                }
+            });
         }
 
         private void ProcessDatagram(byte[] datagram)
