@@ -1,5 +1,6 @@
 branches:
-  only: master
+  only:
+    - master
 
 install:
   - set QTDIR=C:\Qt\5.5\mingw492_32
