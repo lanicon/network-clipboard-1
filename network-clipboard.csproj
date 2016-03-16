@@ -56,5 +56,6 @@
     <Compile Include="BroadcastMessageFactory.cs" />
     <Compile Include="Configuration.cs" />
     <Compile Include="JsonFormatter.cs" />
+    <Compile Include="Listener.cs" />
   </ItemGroup>
 </Project>

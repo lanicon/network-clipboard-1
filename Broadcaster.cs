@@ -14,7 +14,6 @@ namespace NetworkClipboard
     public class Broadcaster
     {
         public event Action<string> NewPaste;
-        public event EventHandler<EventArgs> SocketClosed;
 
         private event EventHandler<EventArgs> NewMessage;
 
@@ -33,7 +32,6 @@ namespace NetworkClipboard
 
         private UdpClient udpClient;
         private int userId;
-        private byte lastPacketId;
         private BroadcastMessageFactory msgFactory;
         private ConcurrentQueue<BroadcastMessage> msgQueue;
         private AutoResetEvent newMessageWaitHandle;
@@ -49,7 +47,6 @@ namespace NetworkClipboard
 
             udpClient = new UdpClient(APP_PORT);
             udpClient.EnableBroadcast = true;
-            BeginReceive();
         }
 
         private void Broadcaster_NewMessage (object sender, EventArgs e)
@@ -75,58 +72,6 @@ namespace NetworkClipboard
                     System.Diagnostics.Debug.WriteLine("history");
                 }
             }
-        }
-
-        private async void BeginReceive()
-        {
-            try
-            {
-                UdpReceiveResult r = await udpClient.ReceiveAsync();
-                ProcessDatagram(r.Buffer);
-                BeginReceive();
-            }
-            catch (ObjectDisposedException)
-            {
-                if (SocketClosed != null)
-                {
-                    SocketClosed(this, EventArgs.Empty);
-                }
-            }
-            catch (SocketException)
-            {
-                if (SocketClosed != null)
-                {
-                    SocketClosed(this, EventArgs.Empty);
-                }
-            }
-        }
-
-        private void ProcessDatagram(byte[] datagram)
-        {
-            if (datagram == null)
-            {
-                return;
-            }
-
-            try
-            {
-                BinaryFormatter f = new BinaryFormatter();
-                using (MemoryStream ms = new MemoryStream(datagram))
-                {
-                    BroadcastMessage i = f.Deserialize(ms) as BroadcastMessage;
-                    if (NewMessage != null &&
-                        i != null &&
-                        i.PacketId != lastPacketId)
-                    {
-                        msgQueue.Enqueue(i);
-                        NewMessage(this, EventArgs.Empty);
-                    }
-
-                    lastPacketId = i.PacketId;
-                }
-            }
-            catch (SerializationException)
-            {}
         }
 
         private void FormatAndSend(BroadcastMessage msg)
