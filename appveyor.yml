@@ -1,6 +1,16 @@
+branches:
+  only: master
+
 install:
   - set QTDIR=C:\Qt\5.5\mingw492_32
   - set PATH=%PATH%;%QTDIR%\bin;C:\MinGW\bin
+
 build_script:
   - qmake network-clipboard.pro
-  - mingw32-make -D__NO_INLINE__
+  - mingw32-make
+
+notifications:
+  - provider: Email
+    on_build_success: false
+    on_build_failure: false
+    on_build_status_changed: false
