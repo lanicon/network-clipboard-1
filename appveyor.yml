@@ -3,4 +3,4 @@ install:
   - set PATH=%PATH%;%QTDIR%\bin;C:\MinGW\bin
 build_script:
   - qmake network-clipboard.pro
-  - mingw32-make
+  - mingw32-make -D__NO_INLINE__
