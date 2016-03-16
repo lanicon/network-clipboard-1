@@ -4,10 +4,11 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
     <ProjectGuid>{EA45B650-A1CD-484C-B07A-B5C9170DA955}</ProjectGuid>
-    <OutputType>Exe</OutputType>
-    <RootNamespace>networkclipboard</RootNamespace>
+    <OutputType>WinExe</OutputType>
+    <RootNamespace>NetworkClipboard</RootNamespace>
     <AssemblyName>network-clipboard</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <StartupObject>NetworkClipboard.Program</StartupObject>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <DebugSymbols>true</DebugSymbols>
@@ -41,8 +42,18 @@
     <Reference Include="Eto.Wpf">
       <HintPath>packages\Eto.Platform.Wpf.2.2.0\lib\net45\Eto.Wpf.dll</HintPath>
     </Reference>
+    <Reference Include="Eto.WinForms">
+      <HintPath>packages\Eto.Platform.Windows.2.2.0\lib\net45\Eto.WinForms.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Program.cs" />
+    <Compile Include="MainWindow.cs" />
+    <Compile Include="MainWindow.Layout.cs" />
+    <Compile Include="NetworkClipboard.cs" />
+    <Compile Include="NetworkClipboardItem.cs" />
   </ItemGroup>
 </Project>
