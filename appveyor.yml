@@ -8,7 +8,9 @@ install:
 
 build_script:
   - qmake network-clipboard.pro
-  - mingw32-make
+  - nmake release
+  - cd release
+  - mt.exe -manifest network-clipboard.exe.manifest -outputresource: network-clipboard.exe
 
 notifications:
   - provider: Email

@@ -2,7 +2,7 @@ TEMPLATE = app
 
 QT += qml quick widgets
 
-CONFIG += c++11
+CONFIG += c++11 static
 
 SOURCES += main.cpp \
     networkclipboard.cpp \
