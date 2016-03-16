@@ -53,7 +53,7 @@ namespace NetworkClipboard
 			}
 			string text = c.Text;
 
-			if (text.Length > 4096)
+            if (text.Length > nClipboard.MaxBufferSize)
 			{
 				MessageBox.Show("Paste size too big. Try something smaller");
 				return;

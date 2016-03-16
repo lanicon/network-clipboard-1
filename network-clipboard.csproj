@@ -50,7 +50,7 @@
     <Compile Include="Program.cs" />
     <Compile Include="MainWindow.cs" />
     <Compile Include="MainWindow.Layout.cs" />
-    <Compile Include="NetworkClipboard.cs" />
-    <Compile Include="NetworkClipboardItem.cs" />
+    <Compile Include="BroadcastMessage.cs" />
+    <Compile Include="Broadcaster.cs" />
   </ItemGroup>
 </Project>

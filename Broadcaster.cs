@@ -7,7 +7,7 @@ using System.Runtime.Serialization.Formatters.Binary;
 
 namespace NetworkClipboard
 {
-    public class NetworkClipboard
+    public class Broadcaster
     {
         public event Action<string> NewPaste;
         public event EventHandler<EventArgs> SocketClosed;
@@ -15,11 +15,21 @@ namespace NetworkClipboard
         private const int APP_PORT = 45454;
 
         public string Channel { get; set; }
+        public int MaxBufferSize
+        {
+            get
+            {
+                return Math.Min(
+                    udpClient.Client.SendBufferSize,
+                    udpClient.Client.ReceiveBufferSize);
+            }
+        }
 
         private UdpClient udpClient;
         private int userId;
+        private byte lastPacketId;
 
-        public NetworkClipboard()
+        public Broadcaster()
         {
             userId = new Random().Next();
             Channel = "";
@@ -64,11 +74,15 @@ namespace NetworkClipboard
                 BinaryFormatter f = new BinaryFormatter();
                 using (MemoryStream ms = new MemoryStream(datagram))
                 {
-                    NetworkClipboardItem i = f.Deserialize(ms) as NetworkClipboardItem;
-                    if (NewPaste != null && i != null)
+                    BroadcastMessage i = f.Deserialize(ms) as BroadcastMessage;
+                    if (NewPaste != null &&
+                        i != null &&
+                        i.PacketId != lastPacketId)
                     {
                         NewPaste(i.Body);
                     }
+
+                    lastPacketId = i.PacketId;
                 }
             }
             catch (SerializationException)
@@ -77,7 +91,7 @@ namespace NetworkClipboard
 
         public void Paste(string text)
         {
-            NetworkClipboardItem i = new NetworkClipboardItem(userId, Channel, text);
+            BroadcastMessage i = new BroadcastMessage(userId, Channel, text);
 
             BinaryFormatter f = new BinaryFormatter();
             using (MemoryStream ms = new MemoryStream())
