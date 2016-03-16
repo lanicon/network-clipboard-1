@@ -6,9 +6,7 @@
 #include "qmlclipboardadapter.h"
 
 // fix for mingw bug 2250
-#if defined(_WIN32) || defined(_WIN64)
-	#define __NO_INLINE__
-#endif
+#define __NO_INLINE__
 
 int main(int argc, char *argv[])
 {
