@@ -24,7 +24,7 @@ deploy:
   file: bin/network-clipboard
   skip_cleanup: true
   on:
-    repo: tostiheld/network-clipboard
+    tags: true
 
 notifications:
   email:
