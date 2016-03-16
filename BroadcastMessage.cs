@@ -2,32 +2,34 @@
 
 namespace NetworkClipboard
 {
+    public enum BroadcastMessageType
+    {
+        Paste,
+        HistoryRequest,
+        HistoryReply
+    }
+
     [Serializable]
     public class BroadcastMessage
     {
         public int UserId { get; set; }
         public string Channel { get; set; }
-        public string Body { get; set; }
-        public byte PacketId
+        public BroadcastMessageType MessageType { get; set; }
+        public byte[] Body { get; set; }
+        public byte PacketId { get; private set; }
+
+        private static byte packetCount = 0;
+
+        public BroadcastMessage()
         {
-            get
+            Channel = "";
+            Body = new byte[0];
+            PacketId = packetCount;
+
+            packetCount++;
+            if (packetCount == Byte.MaxValue)
             {
-                return packetId;
-            }
-        }
-
-        private static byte packetId = 0;
-
-        public BroadcastMessage(int id, string channel, string body)
-        {
-            UserId = id;
-            Channel = channel;
-            Body = body;
-
-            packetId++;
-            if (packetId == Byte.MaxValue)
-            {
-                packetId = 0;
+                packetCount = 0;
             }
         }
     }

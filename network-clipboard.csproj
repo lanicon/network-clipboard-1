@@ -52,5 +52,6 @@
     <Compile Include="MainWindow.Layout.cs" />
     <Compile Include="BroadcastMessage.cs" />
     <Compile Include="Broadcaster.cs" />
+    <Compile Include="BroadcastMessageFactory.cs" />
   </ItemGroup>
 </Project>

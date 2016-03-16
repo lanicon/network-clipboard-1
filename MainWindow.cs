@@ -1,20 +1,30 @@
 ﻿using System;
 using System.Text;
 using Eto.Forms;
+using System.Threading.Tasks;
 
 namespace NetworkClipboard
 {
 	public partial class MainWindow : Form
 	{
-		private NetworkClipboard nClipboard;
+		private Broadcaster nClipboard;
 
 		public MainWindow()
 		{
-			nClipboard = new NetworkClipboard();
+			nClipboard = new Broadcaster();
 			nClipboard.NewPaste += NClipboard_NewPaste;
+            nClipboard.RequestHistory("").ContinueWith(HistoryReceived);
 
 			Layout();
 		}
+
+        private void HistoryReceived(Task<string> history)
+        {
+            if (history.Result != "")
+            {
+                textBox.Text = history.Result;
+            }
+        }
 
 		private void NClipboard_NewPaste (string text)
 		{
