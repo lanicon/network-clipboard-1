@@ -12,9 +12,8 @@ namespace NetworkClipboard
     [Serializable]
     public class BroadcastMessage
     {
-        public int UserId { get; set; }
         public string Channel { get; set; }
-        public DateTime Timestap { get; set; }
+        public DateTime Timestamp { get; set; }
         public BroadcastMessageType MessageType { get; set; }
         public byte[] Body { get; set; }
         public byte PacketId { get; private set; }
@@ -25,6 +24,7 @@ namespace NetworkClipboard
         {
             Channel = "";
             Body = new byte[0];
+            Timestamp = DateTime.Now;
             PacketId = packetCount;
 
             packetCount++;

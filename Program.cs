@@ -20,7 +20,10 @@ namespace NetworkClipboard
             try
             {
                 Config = ParseArgs(args);
-                new Eto.Forms.Application().Run(new MainWindow());
+                Listener l = new Listener(Config.Port);
+                Controller c = new Controller(l);
+
+                new Eto.Forms.Application().Run(new MainWindow(c));
                 Config.Save(configPath);
             }
             catch (InvalidConfigurationException)

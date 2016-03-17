@@ -8,7 +8,7 @@ namespace NetworkClipboard
     {
         private Command pasteCommand;
         private Command quitCommand;
-        private TextArea textBox;
+        private TabControl tabs;
 
         private void Layout()
         {
@@ -41,9 +41,14 @@ namespace NetworkClipboard
                 }
             };
 
-            textBox = new TextArea();
-            textBox.ReadOnly = true;
-            Content = textBox;
+            tabs = new TabControl();
+            tabs.Pages.Add(new TabPage()
+                {
+                    Text = "default",
+                    Content = new TextArea()
+                });
+                
+            Content = tabs;
         }
     }
 }

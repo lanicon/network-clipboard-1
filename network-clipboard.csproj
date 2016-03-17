@@ -52,11 +52,11 @@
     <Compile Include="MainWindow.cs" />
     <Compile Include="MainWindow.Layout.cs" />
     <Compile Include="BroadcastMessage.cs" />
-    <Compile Include="Broadcaster.cs" />
     <Compile Include="BroadcastMessageFactory.cs" />
     <Compile Include="Configuration.cs" />
     <Compile Include="JsonFormatter.cs" />
     <Compile Include="Listener.cs" />
     <Compile Include="Controller.cs" />
+    <Compile Include="UdpMessenger.cs" />
   </ItemGroup>
 </Project>

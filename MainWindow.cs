@@ -2,52 +2,62 @@
 using System.Text;
 using Eto.Forms;
 using System.Threading.Tasks;
+using System.Collections.Generic;
 
 namespace NetworkClipboard
 {
 	public partial class MainWindow : Form
 	{
-		private Broadcaster nClipboard;
+        private Controller controller;
 
-		public MainWindow()
+        public MainWindow(Controller c)
 		{
-			nClipboard = new Broadcaster();
-			nClipboard.NewPaste += NClipboard_NewPaste;
-            nClipboard.RequestHistory("").ContinueWith(HistoryReceived);
+            if (c == null)
+            {
+                throw new ArgumentNullException();
+            }
+            controller = c;
+            controller.NewPaste += Controller_NewPaste;
 
 			Layout();
 		}
 
-        private void HistoryReceived(Task<string> history)
+        private void Controller_NewPaste (string channel, DateTime timestamp, string text)
         {
-            if (history.Result != "")
+            TextArea target = null;
+            TabPage targetPage = null;
+            foreach (TabPage page in tabs.Pages)
             {
-                textBox.Text = history.Result;
+                if (page.Text == channel)
+                {
+                    target = page.Content as TextArea;
+                    targetPage = page;
+                }
             }
+
+            if (target == null)
+            {
+                target = new TextArea();
+                targetPage = new TabPage()
+                {
+                    Text = channel,
+                    Content = target
+                };
+                tabs.Pages.Add(targetPage);
+                targetPage = tabs.Pages[0];
+            }
+
+            StringBuilder sb = new StringBuilder();
+            sb.AppendLine(timestamp.ToString());
+            sb.AppendLine("--------------------");
+            sb.AppendLine(text);
+            sb.AppendLine("--------------------");
+            sb.AppendLine();
+
+            target.Append(sb.ToString(), true);
+            targetPage.Focus();
+            return;
         }
-
-		private void NClipboard_NewPaste (string text)
-		{
-			StringBuilder sb = new StringBuilder(textBox.Text);
-
-			sb.Append(DateTime.Now.ToString());
-			sb.Append(Environment.NewLine);
-			for (int i = 0; i < 20; i++)
-			{
-				sb.Append("-");
-			}
-			sb.Append(Environment.NewLine);
-			sb.Append(text);
-			sb.Append(Environment.NewLine);
-			for (int i = 0; i < 20; i++)
-			{
-				sb.Append("-");
-			}
-			sb.Append(Environment.NewLine);
-			sb.Append(Environment.NewLine);
-
-			textBox.Append(sb.ToString(), true);
-		}
 
 		private void QuitCommand_Executed (object sender, EventArgs e)
 		{
@@ -63,13 +73,13 @@ namespace NetworkClipboard
 			}
 			string text = c.Text;
 
-            if (text.Length > nClipboard.MaxBufferSize)
-			{
-				MessageBox.Show("Paste size too big. Try something smaller");
-				return;
-			}
+            if (text.Length > UdpMessenger.MaxBufferSize)
+            {
+                MessageBox.Show("Paste is too big. Try something smaller");
+                return;
+            }
 
-			nClipboard.Paste(text);
+            controller.Paste("default", text);
 		}
 	}
 }

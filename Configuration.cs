@@ -24,6 +24,8 @@ namespace NetworkClipboard
 
             string unformatted = serializer.Serialize(this);
             string formatted = JsonFormatter.PrettyFormat(unformatted);
+
+            Directory.CreateDirectory(Path.GetDirectoryName(path));
             File.WriteAllText(path, formatted);
         }
 
