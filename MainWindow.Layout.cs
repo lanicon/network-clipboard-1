@@ -8,6 +8,7 @@ namespace NetworkClipboard
     {
         private Command pasteCommand;
         private Command quitCommand;
+        private Command closeCommand;
         private TabControl tabs;
 
         private void Layout()
@@ -20,6 +21,13 @@ namespace NetworkClipboard
             pasteCommand.MenuText = "&Paste";
             pasteCommand.Shortcut = Application.Instance.CommonModifier | Keys.V;
             pasteCommand.Executed += PasteCommand_Executed;
+
+            closeCommand = new Command()
+            {
+                    MenuText = "&Close",
+                    Shortcut = Application.Instance.CommonModifier | Keys.W
+            };
+            closeCommand.Executed += CloseCommand_Executed;
 
             quitCommand = new Command();
             quitCommand.MenuText = "&Quit";
@@ -36,6 +44,7 @@ namespace NetworkClipboard
                         Items = 
                         {
                             pasteCommand,
+                            closeCommand,
                             quitCommand
                         }
                     }
@@ -47,16 +56,12 @@ namespace NetworkClipboard
             plusPage.Click += PlusPage_Click;
 
             tabs = new TabControl();
+            tabs.Pages.Add(plusPage);
             foreach (string s in Program.Config.Channels)
             {
-                tabs.Pages.Add(new TabPage()
-                {
-                    Text = s,
-                    Content = ReadOnlyTextArea()
-                });
+                AddNewChannel(s);
             }
-            tabs.Pages.Add(plusPage);
-                
+
             Content = tabs;
         }
 

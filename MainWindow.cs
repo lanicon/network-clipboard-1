@@ -111,6 +111,15 @@ namespace NetworkClipboard
 
             controller.Paste(tabs.SelectedPage.Text, text);
 		}
+
+        private void CloseCommand_Executed (object sender, EventArgs e)
+        {
+            if (tabs.SelectedPage.Text != "+" &&
+                tabs.SelectedPage.Text != "default")
+            {
+                tabs.Pages.RemoveAt(tabs.SelectedIndex);
+            }
+        }
 	}
 }
 
