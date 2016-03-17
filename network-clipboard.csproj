@@ -58,5 +58,6 @@
     <Compile Include="Listener.cs" />
     <Compile Include="Controller.cs" />
     <Compile Include="UdpMessenger.cs" />
+    <Compile Include="TextInputDialog.cs" />
   </ItemGroup>
 </Project>

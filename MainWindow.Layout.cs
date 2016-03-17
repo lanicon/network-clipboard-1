@@ -40,15 +40,27 @@ namespace NetworkClipboard
                     }
                 }
             };
+            
+            TabPage plusPage = new TabPage();
+            plusPage.Text = "+";
+            plusPage.Click += PlusPage_Click;
 
             tabs = new TabControl();
             tabs.Pages.Add(new TabPage()
-                {
-                    Text = "default",
-                    Content = new TextArea()
-                });
+            {
+                Text = "default",
+                Content = ReadOnlyTextArea()
+            });
+            tabs.Pages.Add(plusPage);
                 
             Content = tabs;
+        }
+
+        private TextArea ReadOnlyTextArea()
+        {
+            TextArea output = new TextArea();
+            output.ReadOnly = true;
+            return output;
         }
     }
 }

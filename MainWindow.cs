@@ -37,14 +37,8 @@ namespace NetworkClipboard
 
             if (target == null)
             {
-                target = new TextArea();
-                targetPage = new TabPage()
-                {
-                    Text = channel,
-                    Content = target
-                };
-                tabs.Pages.Add(targetPage);
-                targetPage = tabs.Pages[0];
+                targetPage = AddNewChannel(channel);
+                target = targetPage.Content as TextArea;
             }
 
             StringBuilder sb = new StringBuilder();
@@ -55,8 +49,31 @@ namespace NetworkClipboard
             sb.AppendLine();
 
             target.Append(sb.ToString(), true);
-            targetPage.Focus();
             return;
+        }
+
+        private TabPage AddNewChannel(string name)
+        {
+            TabPage newPage = new TabPage()
+            {
+                Text = name,
+                Content = ReadOnlyTextArea()
+            };
+            tabs.Pages.Insert(tabs.Pages.Count - 1, newPage);
+            return newPage;
+        }
+
+        private void PlusPage_Click (object sender, EventArgs e)
+        {
+            TextInputDialog input = new TextInputDialog();
+            string name = input.AskInput();
+
+            if (!String.IsNullOrWhiteSpace(name))
+            {
+                AddNewChannel(name);
+            }
+
+            tabs.SelectedIndex = tabs.Pages.Count - 2;
         }
 
 		private void QuitCommand_Executed (object sender, EventArgs e)
@@ -64,7 +81,7 @@ namespace NetworkClipboard
 			Close();
 		}
 
-		private void PasteCommand_Executed (object sender, EventArgs e)
+		private void PasteCommand_Executed(object sender, EventArgs e)
 		{
 			Clipboard c = new Clipboard();
 			if (c.Text == null)
@@ -83,4 +100,5 @@ namespace NetworkClipboard
 		}
 	}
 }
+
 
