@@ -32,7 +32,7 @@ namespace NetworkClipboard
         public void Start()
         {
             Listening = true;
-            Listen();
+            Receive();
         }
 
         public void Stop()
@@ -49,27 +49,6 @@ namespace NetworkClipboard
                     Listening = false;
                 }
             }
-        }
-
-        private async void Listen()
-        {
-            await Task.Run(() =>
-            {
-                while (Listening)
-                {
-                    receiveTask = BeginReceive();
-                    receiveTask.ContinueWith((task) =>
-                    {
-                        if (task != null)
-                        {
-                            Task<UdpReceiveResult> udptask = task as Task<UdpReceiveResult>;
-                            ProcessDatagram(
-                                udptask.Result.Buffer, 
-                                udptask.Result.RemoteEndPoint.Address);
-                        }
-                    });
-                }
-            });
         }
 
         private void ProcessDatagram(byte[] datagram, IPAddress source)
@@ -100,11 +79,13 @@ namespace NetworkClipboard
             {}
         }
 
-        private async Task<UdpReceiveResult> BeginReceive()
+        private async void Receive()
         {
             try
             {
-                return await udpListener.ReceiveAsync();
+                UdpReceiveResult r = await udpListener.ReceiveAsync();
+                ProcessDatagram(r.Buffer, r.RemoteEndPoint.Address);
+                Receive();
             }
             catch (ObjectDisposedException)
             {
@@ -124,8 +105,6 @@ namespace NetworkClipboard
 
                 Listening = false;
             }
-
-            return new UdpReceiveResult();
         }
 
         // TODO: make more robust, detect IP address changes

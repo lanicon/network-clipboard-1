@@ -27,23 +27,21 @@ namespace NetworkClipboard
 
         public static void SendTo(BroadcastMessage msg, IPAddress dest)
         {
-            using (UdpClient udp = new UdpClient())
+            UdpClient udp = new UdpClient(Program.Config.Port);
+            udp.EnableBroadcast = true;
+
+            byte[] datagram;
+            using (MemoryStream ms = new MemoryStream())
             {
-                udp.EnableBroadcast = true;
-
-                byte[] datagram;
-                using (MemoryStream ms = new MemoryStream())
-                {
-                    BinaryFormatter f = new BinaryFormatter();
-                    f.Serialize(ms, msg);
-                    datagram = ms.ToArray();
-                }
-
-                IPEndPoint ep = new IPEndPoint(
-                    dest,
-                    Program.Config.Port);
-                udp.SendAsync(datagram, datagram.Length, ep);
+                BinaryFormatter f = new BinaryFormatter();
+                f.Serialize(ms, msg);
+                datagram = ms.ToArray();
             }
+
+            IPEndPoint ep = new IPEndPoint(
+                dest,
+                Program.Config.Port);
+            udp.SendAsync(datagram, datagram.Length, ep);
         }
     }
 }
