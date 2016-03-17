@@ -96,7 +96,7 @@ namespace NetworkClipboard
                 return;
             }
 
-            controller.Paste("default", text);
+            controller.Paste(tabs.SelectedPage.Text, text);
 		}
 	}
 }
