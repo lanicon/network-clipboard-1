@@ -47,13 +47,15 @@ namespace NetworkClipboard
 
             if (target != null)
             {
+                StringBuilder sb = new StringBuilder();
+
                 foreach (KeyValuePair<DateTime, string> entry in history)
                 {
-                    StringBuilder sb = new StringBuilder();
                     sb.Append(CreateHistoryEntry(entry.Key, entry.Value));
-                    target.Text = "";
-                    target.Append(sb.ToString(), true);
                 }
+
+                target.Text = "";
+                target.Append(sb.ToString(), true);
             }
         }
 
@@ -100,8 +102,10 @@ namespace NetworkClipboard
                 Text = name,
                 Content = ReadOnlyTextArea()
             };
+
             tabs.Pages.Insert(tabs.Pages.Count - 1, newPage);
-            controller.RequestHistory(name);
+            controller.AddChannel(name);
+
             return newPage;
         }
 

@@ -10,11 +10,13 @@ namespace NetworkClipboard
 {
     public static class BroadcastMessageFactory
     {
+        public static int Id { get; set; }
 
         public static BroadcastMessage CreatePasteMessage(string channel, string text)
         {
             BroadcastMessage output = new BroadcastMessage()
             {
+                UserId = Id,
                 Channel = channel,
                 MessageType = BroadcastMessageType.Paste,
                 Body = Encoding.UTF8.GetBytes(text)
@@ -27,6 +29,7 @@ namespace NetworkClipboard
         {
             BroadcastMessage output = new BroadcastMessage()
             {
+                UserId = Id,
                 Channel = channel,
                 MessageType = BroadcastMessageType.HistoryRequest
             };
@@ -50,9 +53,10 @@ namespace NetworkClipboard
 
             BroadcastMessage output = new BroadcastMessage()
             {
-                    Channel = channel,
-                    MessageType = BroadcastMessageType.HistoryReply,
-                    Body = historyBytes
+                UserId = Id,
+                Channel = channel,
+                MessageType = BroadcastMessageType.HistoryReply,
+                Body = historyBytes
             };
 
             return output;

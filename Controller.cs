@@ -14,8 +14,10 @@ namespace NetworkClipboard
         public event Action<string, DateTime, string> NewPaste;
         public event Action<string, SortedList<DateTime, string>> RefreshChannel;
 
-        private Listener listener;
         public Dictionary<string, SortedList<DateTime, string>> Pastes;
+
+        private Listener listener;
+        private int id;
 
         public Controller(Listener source)
         {
@@ -25,10 +27,21 @@ namespace NetworkClipboard
             }
 
             Pastes = new Dictionary<string, SortedList<DateTime, string>>();
+            id = new Random().Next();
+            BroadcastMessageFactory.Id = id;
 
             listener = source;
             listener.NewMessage += Listener_NewMessage;
-            listener.Start();
+        }
+
+        public void AddChannel(string name)
+        {
+            if (!Pastes.ContainsKey(name))
+            {
+                Pastes.Add(name, new SortedList<DateTime, string>());
+            }
+
+            RequestHistory(name);
         }
 
         public void RequestHistory(string channel)
@@ -47,6 +60,11 @@ namespace NetworkClipboard
 
         private void Listener_NewMessage(BroadcastMessage msg, IPAddress source)
         {
+            if (msg.UserId == id)
+            {
+                return;
+            }
+
             switch (msg.MessageType)
             {
                 case BroadcastMessageType.Paste:

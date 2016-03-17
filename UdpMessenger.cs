@@ -28,7 +28,6 @@ namespace NetworkClipboard
         public static void SendTo(BroadcastMessage msg, IPAddress dest)
         {
             UdpClient udp = new UdpClient(Program.Config.Port);
-            udp.EnableBroadcast = true;
 
             byte[] datagram;
             using (MemoryStream ms = new MemoryStream())
@@ -42,14 +41,16 @@ namespace NetworkClipboard
                 udp.Client.SendBufferSize,
                 udp.Client.ReceiveBufferSize))
             {
-                Console.Error.WriteLine("Created a too large datagram. God what have I done. Bailing!");
+                Console.Error.WriteLine(
+                    "Created a too large datagram. God what have I done. Bailing!");
                 return;
             }
 
             IPEndPoint ep = new IPEndPoint(
-                dest,
+                // well this is fucking broken
+                IPAddress.Broadcast,
                 Program.Config.Port);
-            udp.SendAsync(datagram, datagram.Length, ep);
+            udp.Send(datagram, datagram.Length, ep);
         }
     }
 }

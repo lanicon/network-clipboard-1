@@ -18,37 +18,15 @@ namespace NetworkClipboard
         public bool Listening { get; private set; }
 
         private UdpClient udpListener;
-        private byte lastPacketId;
-        private Task<UdpReceiveResult> receiveTask;
-        private List<IPAddress> ownAddresses;
+        private int lastPacketId;
 
         public Listener(int port)
         {
-            ownAddresses = GetOwnAddresses();
             IPEndPoint ep = new IPEndPoint(IPAddress.Any, port);
             udpListener = new UdpClient(ep);
-        }
 
-        public void Start()
-        {
             Listening = true;
             Receive();
-        }
-
-        public void Stop()
-        {
-            if (Listening)
-            {
-                if (!receiveTask.IsCompleted)
-                {
-                    // throws and exception which cancels the task
-                    udpListener.Close();
-                }
-                else
-                {
-                    Listening = false;
-                }
-            }
         }
 
         private void ProcessDatagram(byte[] datagram, IPAddress source)
@@ -66,8 +44,7 @@ namespace NetworkClipboard
                     BroadcastMessage i = f.Deserialize(ms) as BroadcastMessage;
                     if (NewMessage != null &&
                         i != null &&
-                        i.PacketId != lastPacketId &&
-                        !ownAddresses.Contains(source))
+                        i.PacketId != lastPacketId)
                     {
                         NewMessage(i, source);
                     }
@@ -105,27 +82,6 @@ namespace NetworkClipboard
 
                 Listening = false;
             }
-        }
-
-        // TODO: make more robust, detect IP address changes
-        private List<IPAddress> GetOwnAddresses()
-        {
-            List<IPAddress> output = new List<IPAddress>();
-            foreach (NetworkInterface ni in NetworkInterface.GetAllNetworkInterfaces())
-            {
-                if (ni.OperationalStatus == OperationalStatus.Up)
-                {
-                    foreach (UnicastIPAddressInformation ip in ni.GetIPProperties().UnicastAddresses)
-                    {
-                        if (ip.Address.AddressFamily == AddressFamily.InterNetwork)
-                        {
-                            output.Add(ip.Address);
-                        }
-                    }
-                }
-            }
-
-            return output;
         }
     }
 }
