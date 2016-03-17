@@ -1,7 +1,10 @@
 ﻿using System;
+using System.IO;
+using System.IO.Compression;
 using System.Text;
 using System.Net;
 using System.Collections.Generic;
+using System.Runtime.Serialization.Formatters.Binary;
 
 namespace NetworkClipboard
 {
@@ -9,6 +12,7 @@ namespace NetworkClipboard
     public class Controller
     {
         public event Action<string, DateTime, string> NewPaste;
+        public event Action<string, SortedList<DateTime, string>> RefreshChannel;
 
         private Listener listener;
         public Dictionary<string, SortedList<DateTime, string>> Pastes;
@@ -25,6 +29,12 @@ namespace NetworkClipboard
             listener = source;
             listener.NewMessage += Listener_NewMessage;
             listener.Start();
+        }
+
+        public void RequestHistory(string channel)
+        {
+            BroadcastMessage msg = BroadcastMessageFactory.CreateHistoryRequest(channel);
+            UdpMessenger.Broadcast(msg);
         }
 
         public void Paste(string channel, string text)
@@ -97,7 +107,32 @@ namespace NetworkClipboard
 
         private void ProcessHistoryReply(BroadcastMessage reply)
         {
-            
+            SortedList<DateTime, string> history;
+
+            using (MemoryStream ms = new MemoryStream(reply.Body))
+            {
+                using (GZipStream gz = new GZipStream(ms, CompressionMode.Decompress))
+                {
+                    BinaryFormatter f = new BinaryFormatter();
+                    history = f.Deserialize(gz) as SortedList<DateTime, string>;
+                }
+            }
+
+            bool newentries = false;
+            foreach (DateTime key in history.Keys)
+            {
+                if (!Pastes[reply.Channel].ContainsKey(key))
+                {
+                    newentries = true;
+                    Pastes[reply.Channel].Add(key, history[key]);
+                }
+            }
+
+            if (newentries &&
+                RefreshChannel != null)
+            {
+                RefreshChannel(reply.Channel, Pastes[reply.Channel]);
+            }
         }
     }
 }

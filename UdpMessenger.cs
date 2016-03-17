@@ -38,6 +38,14 @@ namespace NetworkClipboard
                 datagram = ms.ToArray();
             }
 
+            if (datagram.Length > Math.Min(
+                udp.Client.SendBufferSize,
+                udp.Client.ReceiveBufferSize))
+            {
+                Console.Error.WriteLine("Created a too large datagram. God what have I done. Bailing!");
+                return;
+            }
+
             IPEndPoint ep = new IPEndPoint(
                 dest,
                 Program.Config.Port);

@@ -18,9 +18,44 @@ namespace NetworkClipboard
             }
             controller = c;
             controller.NewPaste += Controller_NewPaste;
+            controller.RefreshChannel += Controller_RefreshChannel;
 
 			Layout();
 		}
+
+        private string CreateHistoryEntry(DateTime timestamp, string text)
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.AppendLine(timestamp.ToString());
+            sb.AppendLine("--------------------");
+            sb.AppendLine(text);
+            sb.AppendLine("--------------------");
+            sb.AppendLine();
+            return sb.ToString();
+        }
+
+        private void Controller_RefreshChannel (string channel, SortedList<DateTime, string> history)
+        {
+            TextArea target = null;
+            foreach (TabPage page in tabs.Pages)
+            {
+                if (page.Text == channel)
+                {
+                    target = page.Content as TextArea;
+                }
+            }
+
+            if (target != null)
+            {
+                foreach (KeyValuePair<DateTime, string> entry in history)
+                {
+                    StringBuilder sb = new StringBuilder();
+                    sb.Append(CreateHistoryEntry(entry.Key, entry.Value));
+                    target.Text = "";
+                    target.Append(sb.ToString(), true);
+                }
+            }
+        }
 
         private void MainWindow_Closing (object sender, System.ComponentModel.CancelEventArgs e)
         {
@@ -54,14 +89,7 @@ namespace NetworkClipboard
                 target = targetPage.Content as TextArea;
             }
 
-            StringBuilder sb = new StringBuilder();
-            sb.AppendLine(timestamp.ToString());
-            sb.AppendLine("--------------------");
-            sb.AppendLine(text);
-            sb.AppendLine("--------------------");
-            sb.AppendLine();
-
-            target.Append(sb.ToString(), true);
+            target.Append(CreateHistoryEntry(timestamp, text), true);
             return;
         }
 
@@ -73,6 +101,7 @@ namespace NetworkClipboard
                 Content = ReadOnlyTextArea()
             };
             tabs.Pages.Insert(tabs.Pages.Count - 1, newPage);
+            controller.RequestHistory(name);
             return newPage;
         }
 
