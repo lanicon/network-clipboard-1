@@ -11,6 +11,7 @@ namespace NetworkClipboard
     public class Configuration
     {
         public int Port { get; set; }
+        public string[] Channels { get; set; }
 
         // don't serialize this one
         public static bool IsValid = true;
@@ -51,7 +52,8 @@ namespace NetworkClipboard
         {
             return new Configuration()
             {
-                Port = 45454
+                Port = 45454,
+                Channels = new string[]{ "default" }
             };
         }
     }

@@ -14,6 +14,7 @@ namespace NetworkClipboard
         {
             Title = "Network clipboard";
             MinimumSize = new Size(300, 400);
+            Closing += MainWindow_Closing;
 
             pasteCommand = new Command();
             pasteCommand.MenuText = "&Paste";
@@ -46,11 +47,14 @@ namespace NetworkClipboard
             plusPage.Click += PlusPage_Click;
 
             tabs = new TabControl();
-            tabs.Pages.Add(new TabPage()
+            foreach (string s in Program.Config.Channels)
             {
-                Text = "default",
-                Content = ReadOnlyTextArea()
-            });
+                tabs.Pages.Add(new TabPage()
+                {
+                    Text = s,
+                    Content = ReadOnlyTextArea()
+                });
+            }
             tabs.Pages.Add(plusPage);
                 
             Content = tabs;

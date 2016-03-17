@@ -22,6 +22,19 @@ namespace NetworkClipboard
 			Layout();
 		}
 
+        private void MainWindow_Closing (object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            List<string> channels = new List<string>();
+            foreach (TabPage p in tabs.Pages)
+            {
+                if (p.Text != "+")
+                {
+                    channels.Add(p.Text);
+                }
+            }
+            Program.Config.Channels = channels.ToArray();
+        }
+
         private void Controller_NewPaste (string channel, DateTime timestamp, string text)
         {
             TextArea target = null;
